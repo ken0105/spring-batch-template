@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:batch}
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:pass}
+  flyway:
+    baselineOnMigrate: true
+    user: ${DB_MIGRATION_USER:user}
+    password: ${DB_MIGRATION_PASSWORD:pass}
