@@ -76,22 +76,22 @@ public class BatchConfig {
                 .build();
     }
 
-    @Bean
-    public Job taskletJob() throws Exception {
-        return jobBuilderFactory.get("HelloWorldTaskletJob")
-                .incrementer(new RunIdIncrementer())
-                .start(taskletStep1())
-                .next(taskletStep2())
-                .build();
-    }
-
 //    @Bean
-//    public Job chunkJob() throws Exception {
-//        return jobBuilderFactory.get("HelloWorldChunkJob")
+//    public Job taskletJob() throws Exception {
+//        return jobBuilderFactory.get("HelloWorldTaskletJob")
 //                .incrementer(new RunIdIncrementer())
-//                .start(chunkStep())
-//                .listener(jobExecutionListener)
+//                .start(taskletStep1())
+//                .next(taskletStep2())
 //                .build();
 //    }
+
+    @Bean
+    public Job chunkJob() throws Exception {
+        return jobBuilderFactory.get("HelloWorldChunkJob")
+                .incrementer(new RunIdIncrementer())
+                .start(chunkStep())
+                .listener(jobExecutionListener)
+                .build();
+    }
 
 }
