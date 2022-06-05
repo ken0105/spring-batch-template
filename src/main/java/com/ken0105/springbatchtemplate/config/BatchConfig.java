@@ -2,7 +2,9 @@ package com.ken0105.springbatchtemplate.config;
 
 import com.ken0105.springbatchtemplate.tasklet.HelloTasklet;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -36,6 +38,12 @@ public class BatchConfig {
     @Autowired
     private ItemWriter<String> writer;
 
+    @Autowired
+    private JobExecutionListener jobExecutionListener;
+
+    @Autowired
+    private StepExecutionListener stepExecutionListener;
+
     @Bean
     public Step taskletStep1() {
         return stepBuilderFactory.get("HelloTaskletStep1")
@@ -50,6 +58,7 @@ public class BatchConfig {
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
+                .listener(stepExecutionListener)
                 .build();
     }
 
@@ -66,6 +75,8 @@ public class BatchConfig {
         return jobBuilderFactory.get("HelloWorldChunkJob")
                 .incrementer(new RunIdIncrementer())
                 .start(chunkStep())
+                .listener(jobExecutionListener)
                 .build();
     }
+
 }
