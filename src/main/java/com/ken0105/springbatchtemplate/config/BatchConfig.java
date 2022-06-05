@@ -1,6 +1,7 @@
 package com.ken0105.springbatchtemplate.config;
 
 import com.ken0105.springbatchtemplate.tasklet.HelloTasklet;
+import com.ken0105.springbatchtemplate.tasklet.HelloTasklet2;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
@@ -13,6 +14,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -27,7 +29,12 @@ public class BatchConfig {
     private StepBuilderFactory stepBuilderFactory;
 
     @Autowired
+    @Qualifier("HelloTasklet")
     private HelloTasklet helloTasklet;
+
+    @Autowired
+    @Qualifier("HelloTasklet2")
+    private HelloTasklet2 helloTasklet2;
 
     @Autowired
     private ItemReader<String> reader;
@@ -52,6 +59,13 @@ public class BatchConfig {
     }
 
     @Bean
+    public Step taskletStep2() {
+        return stepBuilderFactory.get("HelloTaskletStep2")
+                .tasklet(helloTasklet2)
+                .build();
+    }
+
+    @Bean
     public Step chunkStep() {
         return stepBuilderFactory.get("HelloChunkStep")
                 .<String, String>chunk(3)
@@ -67,16 +81,17 @@ public class BatchConfig {
         return jobBuilderFactory.get("HelloWorldTaskletJob")
                 .incrementer(new RunIdIncrementer())
                 .start(taskletStep1())
+                .next(taskletStep2())
                 .build();
     }
 
-    @Bean
-    public Job chunkJob() throws Exception {
-        return jobBuilderFactory.get("HelloWorldChunkJob")
-                .incrementer(new RunIdIncrementer())
-                .start(chunkStep())
-                .listener(jobExecutionListener)
-                .build();
-    }
+//    @Bean
+//    public Job chunkJob() throws Exception {
+//        return jobBuilderFactory.get("HelloWorldChunkJob")
+//                .incrementer(new RunIdIncrementer())
+//                .start(chunkStep())
+//                .listener(jobExecutionListener)
+//                .build();
+//    }
 
 }

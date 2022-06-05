@@ -7,25 +7,28 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Component("HelloTasklet")
+@Component("HelloTasklet2")
 @StepScope
 @Slf4j
-public class HelloTasklet implements Tasklet {
+public class HelloTasklet2 implements Tasklet {
+
+    @Value("#{JobExecutionContext['jobKey']}")
+    private String jobValue;
+
+    @Value("#{StepExecutionContext['stepKey']}")
+    private String stepValue;
+
     @Override
     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-        log.info("Hello World");
-        ExecutionContext jobContext = stepContribution
-                .getStepExecution()
-                .getJobExecution()
-                .getExecutionContext();
-        jobContext.put("jobKey", "jobValue");
 
-        ExecutionContext stepContext = stepContribution
-                .getStepExecution()
-                .getExecutionContext();
-        stepContext.put("stepKey", "stepValue");
+        log.info("Hello World2");
+
+        log.info("jobKey={}", jobValue);
+
+        log.info("stepKey={}", stepValue);
 
         return RepeatStatus.FINISHED;
     }
